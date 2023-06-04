@@ -1,0 +1,65 @@
+services:
+  chat-services:
+    build: /chat-service/.
+    # ports:
+    #   - 8808:5000
+    networks:
+      backends:
+        aliases:
+          - chat-service
+        ipv4_address: 172.19.0.100
+    volumes:
+      - type: bind
+        source: ./chat-service
+        target: /chat-api
+
+  admin-service:
+    build: /admin-service/.
+    # ports:
+    #   - 10002:3000
+    networks:
+      backends:
+        aliases:
+          - admin-service
+        ipv4_address: 172.19.0.101
+    volumes:
+      - ./admin-service:/admin-api
+
+  frontend:
+    build: /xianju-admin-frontend/.
+    ports:
+      - 8088:8088
+    networks:
+      - backends
+    volumes:
+      - ./xianju-admin-frontend/dist:/app
+      # - ./xianju-admin-frontend/docker/nginx.conf:/etc/nginx/conf.d/nginx.conf
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 3336:3306
+    environment:
+      # MYSQL_USER: xianju
+      MYSQL_ROOT_PASSWORD: 123456
+      # MYSQL_DATABASE: xianju
+      # MYSQL_PASSWORD: 123456
+    volumes:
+      # - xianju-mysql-data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      backends:
+        aliases:
+          - mysql
+        ipv4_address: 172.19.0.102
+
+networks:
+  backends:
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
+
+volumes:
+  xianju-mysql-data:
