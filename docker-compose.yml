@@ -1,6 +1,6 @@
 services:
   chat-services:
-    build: /chat-service/.
+    build: ./chat-service/.
     # ports:
     #   - 8808:5000
     networks:
@@ -14,7 +14,7 @@ services:
         target: /chat-api
 
   admin-service:
-    build: /admin-service/.
+    build: ./admin-service/.
     # ports:
     #   - 10002:3000
     networks:
@@ -26,7 +26,7 @@ services:
       - ./admin-service:/admin-api
 
   frontend:
-    build: /xianju-admin-frontend/.
+    build: ./xianju-admin-frontend/.
     ports:
       - 8088:8088
     networks:
